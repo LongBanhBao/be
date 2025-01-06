@@ -22,5 +22,3 @@ const classSchema = new mongoose.Schema({
 }, { timestamps: true });
 
 export default mongoose.model('Class', classSchema); 
-
-//ksksksk
