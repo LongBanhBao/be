@@ -1,9 +1,9 @@
 import mongoose from 'mongoose';
 import User from '../models/User.js';
-import Class from '../models/Class.js';
-import Assignment from '../models/Assignment.js';
 import Exercise from '../models/Exercise.js';
-import Algorithm from '../models/Algorithm.js';
+import ExerciseType from '../models/ExerciseType.js';
+import Category from '../models/Category.js';
+import bcrypt from 'bcrypt';
 
 const initializeDB = async () => {
     try {
@@ -16,88 +16,35 @@ const initializeDB = async () => {
         // Xóa dữ liệu cũ (nếu có)
         await Promise.all([
             User.deleteMany({}),
-            Class.deleteMany({}),
-            Assignment.deleteMany({}),
             Exercise.deleteMany({}),
-            Algorithm.deleteMany({})
+            ExerciseType.deleteMany({}),
+            Category.deleteMany({})
         ]);
 
         // Tạo user mẫu
+        const hashedPassword = await bcrypt.hash('admin123', 10);
         const admin = await User.create({
-            email: 'admin@example.com',
-            password: '$2b$10$XYZ...', // Hãy mã hóa password trước khi lưu
+            email: 'admin@lecturer.com',
+            password: hashedPassword,
             role: 'admin',
             confirmKey: 'admin-key'
         });
 
-        const teacher = await User.create({
-            email: 'teacher@example.com',
-            password: '$2b$10$XYZ...',
-            role: 'teacher'
-        });
-
-        const student = await User.create({
-            email: 'student@example.com',
-            password: '$2b$10$XYZ...',
-            role: 'student'
-        });
-
-        // Tạo lớp học mẫu
-        const class1 = await Class.create({
-            teacherId: teacher._id,
-            classCode: 'CLASS001',
-            className: 'Lớp Thuật Toán Cơ Bản',
-            students: [student._id]
-        });
-
-        // Tạo bài tập mẫu
-        const assignment = await Assignment.create({
-            classId: class1._id,
-            teacherId: teacher._id,
-            title: 'Bài tập Bubble Sort',
-            description: 'Implement thuật toán Bubble Sort',
-            level: 'basic',
-            points: 10,
-            testCases: [
-                {
-                    input: '[5,4,3,2,1]',
-                    output: '[1,2,3,4,5]',
-                    isValid: true
-                }
-            ],
-            statistics: {
-                totalStudents: 1,
-                correctCount: 0
-            }
-        });
-
-        // Tạo thuật toán mẫu
-        const algorithms = await Algorithm.create([
-            {
-                name: 'Bubble Sort',
-                description: 'Thuật toán sắp xếp nổi bọt'
-            },
-            {
-                name: 'Quick Sort',
-                description: 'Thuật toán sắp xếp nhanh'
-            },
-            {
-                name: 'Merge Sort',
-                description: 'Thuật toán sắp xếp trộn'
-            }
+        // Tạo categories mẫu
+        const categories = await Category.insertMany([
+            { category_id: 'CAT001', category_name: 'Tìm kiếm' },
+            { category_id: 'CAT002', category_name: 'Sắp xếp' }
         ]);
 
-        // Tạo bài tập trong kho
-        const exercise = await Exercise.create({
-            teacherId: teacher._id,
-            title: 'Bài tập Quick Sort',
-            description: 'Implement thuật toán Quick Sort',
-            level: 'intermediate',
-            exerciseType: {
-                name: 'Sorting',
-                description: 'Các bài tập về sắp xếp'
-            }
-        });
+        // Tạo exercise types mẫu
+        const exerciseTypes = await ExerciseType.insertMany([
+            { exercise_type_id: 'TYPE001', category_id: 'CAT001', type_name: 'Tìm kiếm tuần tự' },
+            { exercise_type_id: 'TYPE002', category_id: 'CAT001', type_name: 'Tìm kiếm nhị phân' },
+            { exercise_type_id: 'TYPE003', category_id: 'CAT002', type_name: 'Sắp xếp nổi bọt' },
+            { exercise_type_id: 'TYPE004', category_id: 'CAT002', type_name: 'Sắp xếp chèn' },
+            { exercise_type_id: 'TYPE005', category_id: 'CAT002', type_name: 'Sắp xếp chọn' }
+        ]);
+
 
         console.log('Đã khởi tạo dữ liệu mẫu thành công!');
         

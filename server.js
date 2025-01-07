@@ -14,20 +14,14 @@ app.use(express.json());
 
 // Import routes
 import userRoutes from './routes/users.js';
-import classRoutes from './routes/classes.js';
-import assignmentRoutes from './routes/assignments.js';
 import submissionRoutes from './routes/submissions.js';
 import exerciseRoutes from './routes/exercises.js';
-import algorithmRoutes from './routes/algorithms.js';
 import authRoutes from './routes/auth.js';
 
 // Sử dụng routes
 app.use('/api/users', userRoutes);
-app.use('/api/classes', classRoutes);
-app.use('/api/assignments', assignmentRoutes);
 app.use('/api/submissions', submissionRoutes);
 app.use('/api/exercises', exerciseRoutes);
-app.use('/api/algorithms', algorithmRoutes);
 app.use('/api/auth', authRoutes);
 
 // Routes cơ bản
@@ -45,7 +39,7 @@ const startServer = async () => {
         console.log('MongoDB đã kết nối thành công');
         
         // Khởi tạo dữ liệu mẫu (bỏ comment nếu muốn tạo dữ liệu mẫu)
-        // await initializeDB();
+        //await initializeDB();
         
         app.listen(PORT, () => {
             console.log(`Server đang chạy tại http://localhost:${PORT}`);

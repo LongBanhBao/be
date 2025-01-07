@@ -1,24 +1,29 @@
 import mongoose from 'mongoose';
 
 const submissionSchema = new mongoose.Schema({
-    studentId: {
-        type: mongoose.Schema.Types.ObjectId,
-        ref: 'User',
-        required: true
-    },
-    assignmentId: {
-        type: mongoose.Schema.Types.ObjectId,
-        ref: 'Assignment',
-        required: true
-    },
-    code: {
-        type: String,
-        required: true
-    },
-    result: {
-        type: String,
-        required: true
+  student_id: {
+    type: mongoose.Schema.Types.ObjectId,
+    ref: 'User',
+    required: true,
+    validate: {
+      validator: async function(value) {
+        const user = await mongoose.model('User').findById(value);
+        return user && user.role === 'student';
+      },
+      message: 'Student_id must reference a user with role student'
     }
-}, { timestamps: true });
+  },
+  exercise_id: {
+    type: String,
+    required: true,
+    ref: 'Exercise'
+  },
+  code: {
+    type: String,
+    required: true
+  }
+}, {
+  timestamps: true
+});
 
-export default mongoose.model('Submission', submissionSchema); 
+export default mongoose.model('Submission', submissionSchema);
